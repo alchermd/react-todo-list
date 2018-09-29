@@ -4,7 +4,7 @@ const TodoTask = props => {
       {props.task.description}{" "}
       <a
         className="text-primary"
-        onClick={() => props.handleMoveToDoing(props.index)}
+        onClick={() => props.handleMoveToDoing(props.task.id)}
       >
         &raquo;
       </a>
