@@ -4,8 +4,7 @@ A ReactJS implementation of the classic todo list application
 
 ## Preview
 
-<!-- TODO: Add a preview image -->
-<!-- ![](./img/preview.png) -->
+![](./img/preview.png)
 
 ## Installation
 
