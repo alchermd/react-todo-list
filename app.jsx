@@ -3,14 +3,16 @@ class App extends React.Component {
     super();
 
     this.state = {
+      counter: 0,
       newTask: "",
       tasks: []
     };
 
     this.handleNewTaskChange = this.handleNewTaskChange.bind(this);
     this.handleAddTaskFormSubmit = this.handleAddTaskFormSubmit.bind(this);
-    this.handleMoveToDoing = this.handleMoveToDoing.bind(this);
+
     this.handleMoveToTodo = this.handleMoveToTodo.bind(this);
+    this.handleMoveToDoing = this.handleMoveToDoing.bind(this);
     this.handleMoveToFinished = this.handleMoveToFinished.bind(this);
   }
 
@@ -27,35 +29,101 @@ class App extends React.Component {
       return {
         tasks: [
           ...prevState.tasks,
-          { description: prevState.newTask, status: 0 }
+          { description: prevState.newTask, status: 0 , id: prevState.counter}
         ],
-        newTask: ""
+        newTask: "",
+        counter: prevState.counter + 1,
       };
     });
   }
 
-  handleMoveToDoing(index) {
-    const tasks = this.state.tasks;
-    tasks[index].status = 1;
+  handleMoveToTodo(id) {
+    this.setState(prevState => {
+      const tasks = [...prevState.tasks];
+      tasks.filter(task => task.id === id)[0].status = 0;
 
-    this.setState({ tasks });
+      return { tasks };
+    });
   }
 
-  handleMoveToTodo(index) {
-    const tasks = this.state.tasks;
-    tasks[index].status = 0;
+  handleMoveToDoing(id) {
+    this.setState(prevState => {
+      const tasks = [...prevState.tasks];
+      tasks.filter(task => task.id === id)[0].status = 1;
 
-    this.setState({ tasks });
+      return { tasks };
+    });
   }
 
-  handleMoveToFinished(index) {
-    const tasks = this.state.tasks;
-    tasks[index].status = 2;
+  handleMoveToFinished(id) {
+    this.setState(prevState => {
+      const tasks = [...prevState.tasks];
+      tasks.filter(task => task.id === id)[0].status = 2;
 
-    this.setState({ tasks });
+      return { tasks };
+    });
   }
 
   render() {
+    let todoColumn;
+    let doingColumn;
+    let finishedColumn;
+
+    if (this.state.tasks.filter(task => task.status === 0).length > 0) {
+      todoColumn = (
+        <ul className="list-group-flush">
+          {this.state.tasks
+            .filter(task => task.status === 0)
+            .map((task, index) => (
+              <TodoTask
+                key={index}
+                task={task}
+                handleMoveToDoing={this.handleMoveToDoing}
+              />
+            ))}
+        </ul>
+      );
+    } else {
+      todoColumn = <p>No tasks in this column</p>;
+    }
+
+    if (this.state.tasks.filter(task => task.status === 1).length > 0) {
+      doingColumn = (
+        <ul className="list-group-flush">
+          {this.state.tasks
+            .filter(task => task.status === 1)
+            .map((task, index) => (
+              <DoingTask
+                key={index}
+                task={task}
+                handleMoveToTodo={this.handleMoveToTodo}
+                handleMoveToFinished={this.handleMoveToFinished}
+              />
+            ))}
+        </ul>
+      );
+    } else {
+      doingColumn = <p>No tasks in this column</p>;
+    }
+
+    if (this.state.tasks.filter(task => task.status === 2).length > 0) {
+      finishedColumn = (
+        <ul className="list-group-flush">
+          {this.state.tasks
+            .filter(task => task.status === 2)
+            .map((task, index) => (
+              <FinishedTask
+                key={index}
+                task={task}
+                handleMoveToDoing={this.handleMoveToDoing}
+              />
+            ))}
+        </ul>
+      );
+    } else {
+      finishedColumn = <p>No tasks in this column</p>;
+    }
+
     return (
       <div className="card">
         <div className="card-header">
@@ -85,53 +153,19 @@ class App extends React.Component {
             <div className="col text-center">
               <h2>Todo</h2>
 
-              <ul className="list-group-flush">
-                {this.state.tasks
-                  .filter(task => task.status === 0)
-                  .map((task, index) => (
-                    <TodoTask
-                      key={index}
-                      index={index}
-                      task={task}
-                      handleMoveToDoing={this.handleMoveToDoing}
-                    />
-                  ))}
-              </ul>
+              {todoColumn}
             </div>
 
             <div className="col text-center">
               <h2>Doing</h2>
 
-              <ul className="list-group-flush">
-                {this.state.tasks
-                  .filter(task => task.status === 1)
-                  .map((task, index) => (
-                    <DoingTask
-                      key={index}
-                      index={index}
-                      task={task}
-                      handleMoveToTodo={this.handleMoveToTodo}
-                      handleMoveToFinished={this.handleMoveToFinished}
-                    />
-                  ))}
-              </ul>
+              {doingColumn}
             </div>
 
             <div className="col text-center">
               <h2>Finished</h2>
 
-              <ul className="list-group-flush">
-                {this.state.tasks
-                  .filter(task => task.status === 2)
-                  .map((task, index) => (
-                    <FinishedTask
-                      key={index}
-                      index={index}
-                      task={task}
-                      handleMoveToDoing={this.handleMoveToDoing}
-                    />
-                  ))}
-              </ul>
+              {finishedColumn}
             </div>
           </div>
         </div>
