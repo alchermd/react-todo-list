@@ -9,6 +9,7 @@ class App extends React.Component {
 
     this.handleNewTaskChange = this.handleNewTaskChange.bind(this);
     this.handleAddTaskFormSubmit = this.handleAddTaskFormSubmit.bind(this);
+    this.handleMoveToDoing = this.handleMoveToDoing.bind(this);
   }
 
   handleNewTaskChange(e) {
@@ -29,6 +30,15 @@ class App extends React.Component {
         newTask: ""
       };
     });
+  }
+
+  handleMoveToDoing(index) {
+    console.log(index);
+
+    const tasks = this.state.tasks;
+    tasks[index].status = 1;
+
+    this.setState({ tasks });
   }
 
   render() {
@@ -65,15 +75,33 @@ class App extends React.Component {
                 {this.state.tasks
                   .filter(task => task.status === 0)
                   .map((task, index) => (
-                    <TodoTask key={index} task={task} />
+                    <TodoTask
+                      key={index}
+                      index={index}
+                      task={task}
+                      handleMoveToDoing={this.handleMoveToDoing}
+                    />
                   ))}
               </ul>
             </div>
 
             <div className="col text-center">
               <h2>Doing</h2>
+
+              <ul className="list-group-flush">
+                {this.state.tasks
+                  .filter(task => task.status === 1)
+                  .map((task, index) => (
+                    <DoingTask
+                      key={index}
+                      index={index}
+                      task={task}
+                      handleMoveToDoing={this.handleMoveToDoing}
+                    />
+                  ))}
+              </ul>
             </div>
-            
+
             <div className="col text-center">
               <h2>Finished</h2>
             </div>
