@@ -10,6 +10,8 @@ class App extends React.Component {
     this.handleNewTaskChange = this.handleNewTaskChange.bind(this);
     this.handleAddTaskFormSubmit = this.handleAddTaskFormSubmit.bind(this);
     this.handleMoveToDoing = this.handleMoveToDoing.bind(this);
+    this.handleMoveToTodo = this.handleMoveToTodo.bind(this);
+    this.handleMoveToFinished = this.handleMoveToFinished.bind(this);
   }
 
   handleNewTaskChange(e) {
@@ -33,10 +35,22 @@ class App extends React.Component {
   }
 
   handleMoveToDoing(index) {
-    console.log(index);
-
     const tasks = this.state.tasks;
     tasks[index].status = 1;
+
+    this.setState({ tasks });
+  }
+
+  handleMoveToTodo(index) {
+    const tasks = this.state.tasks;
+    tasks[index].status = 0;
+
+    this.setState({ tasks });
+  }
+
+  handleMoveToFinished(index) {
+    const tasks = this.state.tasks;
+    tasks[index].status = 2;
 
     this.setState({ tasks });
   }
@@ -96,7 +110,8 @@ class App extends React.Component {
                       key={index}
                       index={index}
                       task={task}
-                      handleMoveToDoing={this.handleMoveToDoing}
+                      handleMoveToTodo={this.handleMoveToTodo}
+                      handleMoveToFinished={this.handleMoveToFinished}
                     />
                   ))}
               </ul>
@@ -104,6 +119,19 @@ class App extends React.Component {
 
             <div className="col text-center">
               <h2>Finished</h2>
+
+              <ul className="list-group-flush">
+                {this.state.tasks
+                  .filter(task => task.status === 2)
+                  .map((task, index) => (
+                    <FinishedTask
+                      key={index}
+                      index={index}
+                      task={task}
+                      handleMoveToDoing={this.handleMoveToDoing}
+                    />
+                  ))}
+              </ul>
             </div>
           </div>
         </div>
